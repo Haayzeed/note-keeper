@@ -1,60 +1,183 @@
 <template>
-    <div>
+    <div class="container">
         <div class="note">
-            <div class="note__content">
-                <h1>yes this me me</h1>
-                <p>Lorem ipsum dolor sit amet consectetur.</p>
+            <div class="note__container" v-for="result in results" :key="result.id" @click="showModal(result.id)" :style="{backgroundColor: result.bgcolor}" :class="{whiteColor: result.bgcolor == ''}">
+                <h1 class="note__title">{{result.title}}</h1>
+                <p class="note__content">{{result.content}}</p>
+                <p class="note__date">{{new Date(result.updatedAt).toLocaleString()}}</p>
             </div>
-            <div class="note__content">
-                <h1>yes this me me</h1>
-                <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit.</p>
-            </div>
-            <div class="note__content">
-                <h1>yes this me me</h1>
-                <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Nisi quia explicabo voluptate reiciendis.</p>
-            </div>
-            <div class="note__content">
-                <h1>yes this me me</h1>
-                <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Nisi.</p>
-            </div>
-            <div class="note__content">
-                <h1>yes this me me</h1>
-                <p>Lorem ipsum dolor sit amet consectetur.</p>
-            </div>
-            <div class="note__content">
-                <h1>yes this me me</h1>
-                <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit.</p>
+            
+        </div>
+        <div class="overlay" v-show="this.show" @click="hideModal"></div>
+        <div class="modal" v-show="this.show">
+            <form>
+                <input type="text" placeholder="Title" v-model="notes.title">
+                <textarea name="" id="" cols="30" rows="10" v-model="notes.content"></textarea>
+            </form>
+            <div class="modal__footer">
+                <button class="modal__btn modal__btn--danger" @click="deleteNote(notes.id)">Delete</button>
+                <button class="modal__btn modal__btn--save" @click.prevent="updateNote(notes.id)">Done</button>
             </div>
         </div>
     </div>
 </template>
 
 <script>
+import axios from 'axios'
 export default {
-    
+    data() {
+        return {
+            results: {},
+            notes: {},
+            show: false
+        }
+    },
+    methods: {
+         getData(){
+            axios.get('https://strapi-note.herokuapp.com/notes').then((response) => {
+                this.results = response.data;
+                this.results.sort((a, b) => {
+                    return (b.updatedAt - a.updatedAt);
+                })
+            })
+        },
+        hideModal() {
+            this.show = false
+        },
+        showModal(id) {
+            this.show = true;
+             axios.get('https://strapi-note.herokuapp.com/notes/' + id).then((response) => {
+                this.notes = response.data;
+            })
+        },
+        updateNote(id) {
+            this.show = false
+            axios.put('https://strapi-note.herokuapp.com/notes/' + id, this.notes).then((response) => {
+                this.notes = response.data;
+            })
+        },
+        deleteNote(id) {
+            axios.delete('https://strapi-note.herokuapp.com/notes/' + id).then((response) => {
+                this.notes = response.data;
+            })
+            this.results = this.results.filter(result => { return result.id != id});
+        }
+    },
+    created() {
+        this.getData();
+    },
+    updated() {
+        this.getData();
+    }
 }
 </script>
 
 <style lang="scss" scoped>
+    .container {
+        // width: 90%;
+    }
     .note {
         width: 90%;
         margin: 50px auto 0 auto;
         display: grid;
         grid-template-columns: repeat(4, 1fr);
         grid-gap: 20px;
-        &__content {
+
+        @media screen and (min-width: 1441px) {
+            grid-template-columns: repeat(5, 1fr);
+        }
+        @media screen and (max-width: 1024px) {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        @media screen and (max-width: 600px) {
+            grid-template-columns: 1fr;
+        }
+
+        &__container {
             background: var(--white);
             padding: 20px;
             border-radius: 5px;
             max-height: 100%;
-            h1 {
+            cursor: pointer;
+            color: #fff;
+            border: 1px solid #dadce0;
+            position: relative;
+        }
+
+        &__title {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        &__content {
+            line-height: 1.4;
+            font-size: 14px;
+            margin-bottom: 40px;
+        }
+
+        &__date {
+            font-size: 10px;
+            position: absolute;
+            bottom: 20px;
+        }
+    }
+
+    .overlay {
+        width: 100%;
+        height: 100vh;
+        background: rgb(255, 255, 255, .2);
+        backdrop-filter: blur(10px);
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+    }
+
+    .modal {
+        width: 600px;
+        max-width: 600px;
+        background: var(--white);
+        box-shadow: 0 1px 2px 0 rgb(60 64 67 / 30%), 0 2px 6px 2px rgb(60 64 67 / 15%);
+        border-radius: 5px;
+        padding: 20px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 20;
+        flex-direction: column;
+
+        form {
+            
+            input {
+                width: 100%;
                 font-size: 16px;
+                border: none;
+                font-family: Inter;
                 margin-bottom: 10px;
+                &:focus {
+                    outline: none;
+                }
             }
-            p {
-                line-height: 1.4;
-                font-size: 14px;
+            textarea {
+                width: 100%;
+                height: 200px;
+                border: none;
+                resize: none;
+                font-size: 16px;
+                font-family: Inter;
+                &:focus {
+                    outline: none;
+                }
             }
         }
+
+        &__footer {
+            display: flex;
+            justify-content: space-between;
+        }
+    }
+    .whiteColor {
+        color: #000;
     }
 </style>

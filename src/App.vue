@@ -23,6 +23,6 @@
   --background-2: #eee;
 }
 body {
-  background: var(--background-2);
+  // background: var(--background-2);
 }
 </style>

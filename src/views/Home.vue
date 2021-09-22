@@ -17,3 +17,9 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+  .home {
+    padding: 50px;
+  }
+</style>
