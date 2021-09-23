@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <div class="note">
-            <div class="note__container" v-for="result in results" :key="result.id" @click="showModal(result.id)" :style="{backgroundColor: result.bgcolor}" :class="{whiteColor: result.bgcolor == ''}">
+            <div class="note__container" v-for="result in reverseItems" :key="result.id" @click="showModal(result.id)" :style="{backgroundColor: result.bgcolor}" :class="{whiteColor: result.bgcolor == ''}">
                 <h1 class="note__title">{{result.title}}</h1>
                 <p class="note__content">{{result.content}}</p>
                 <p class="note__date">{{new Date(result.updatedAt).toLocaleString()}}</p>
@@ -27,12 +27,18 @@ import axios from 'axios'
 export default {
     data() {
         return {
-            results: {},
+            results: [],
             notes: {},
             show: false
         }
     },
+    computed: {
+        reverseItems() {
+            return this.results.slice().reverse();
+        }     
+    },
     methods: {
+        // get data from api
          getData(){
             axios.get('https://strapi-note.herokuapp.com/notes').then((response) => {
                 this.results = response.data;
@@ -41,22 +47,31 @@ export default {
                 })
             })
         },
+
+        // hide modal
         hideModal() {
             this.show = false
         },
+
+        // show modal
         showModal(id) {
             this.show = true;
              axios.get('https://strapi-note.herokuapp.com/notes/' + id).then((response) => {
                 this.notes = response.data;
             })
         },
+
+        // update notes
         updateNote(id) {
             this.show = false
             axios.put('https://strapi-note.herokuapp.com/notes/' + id, this.notes).then((response) => {
                 this.notes = response.data;
             })
         },
+
+        // delete notes
         deleteNote(id) {
+            this.show = false
             axios.delete('https://strapi-note.herokuapp.com/notes/' + id).then((response) => {
                 this.notes = response.data;
             })
@@ -73,9 +88,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-    .container {
-        // width: 90%;
-    }
     .note {
         width: 90%;
         margin: 50px auto 0 auto;
@@ -86,9 +98,11 @@ export default {
         @media screen and (min-width: 1441px) {
             grid-template-columns: repeat(5, 1fr);
         }
+
         @media screen and (max-width: 1024px) {
             grid-template-columns: repeat(2, 1fr);
         }
+
         @media screen and (max-width: 600px) {
             grid-template-columns: 1fr;
             width: 100%;
@@ -124,13 +138,15 @@ export default {
     }
 
     .overlay {
-        width: 100%;
+        width: 100vw;
         height: 100vh;
         background: rgb(255, 255, 255, .2);
         backdrop-filter: blur(10px);
-        position: absolute;
+        position: fixed;
         top: 0;
         left: 0;
+        bottom: 0;
+        right: 0;
         z-index: 1;
     }
 
@@ -148,8 +164,12 @@ export default {
         z-index: 20;
         flex-direction: column;
 
+        @media (max-width: 600px) {
+            width: calc(100% - 40px);
+            margin: 0 auto;
+        }
+
         form {
-            
             input {
                 width: 100%;
                 font-size: 16px;
@@ -176,8 +196,22 @@ export default {
         &__footer {
             display: flex;
             justify-content: space-between;
+
+            button {
+                padding: 10px;
+                background: #e7e7e7;
+                border: none;
+                cursor: pointer;
+                font-weight: bold;
+
+                &.modal__btn--danger {
+                    background: #f20;
+                    color: #fff;
+                }
+            }
         }
     }
+
     .whiteColor {
         color: #000;
     }
