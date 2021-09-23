@@ -82,6 +82,9 @@ export default {
                 }
             }
         }
+        @media (max-width: 600px) {
+            width: 100%;
+        }
 
         form {
             width: 100%;

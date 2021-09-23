@@ -91,6 +91,7 @@ export default {
         }
         @media screen and (max-width: 600px) {
             grid-template-columns: 1fr;
+            width: 100%;
         }
 
         &__container {
