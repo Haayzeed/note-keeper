@@ -5,6 +5,9 @@
                 <h1 class="note__title">{{result.title}}</h1>
                 <p class="note__content">{{result.content}}</p>
                 <p class="note__date">{{new Date(result.updatedAt).toLocaleString()}}</p>
+                <svg class="note__edit" @click="showModal(result.id)" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M14.856 3L15.2096 2.64648L14.8559 2.29276L14.5023 2.64655L14.856 3ZM8.006 9.854L8.35949 10.2076L8.35966 10.2075L8.006 9.854ZM2 15.858L1.64651 15.5044L1.5 15.6508V15.858H2ZM2 20.999H1.5V21.499H2V20.999ZM7.142 20.999V21.499H7.34903L7.49547 21.3526L7.142 20.999ZM13.149 14.995L13.5025 15.3486L13.5025 15.3486L13.149 14.995ZM20 8.145L20.3535 8.49858L20.7071 8.14506L20.3536 7.79148L20 8.145ZM14.5023 2.64655L7.65234 9.50055L8.35966 10.2075L15.2097 3.35345L14.5023 2.64655ZM7.65251 9.50039L1.64651 15.5044L2.35349 16.2116L8.35949 10.2076L7.65251 9.50039ZM1.5 15.858V20.999H2.5V15.858H1.5ZM2 21.499H7.142V20.499H2V21.499ZM7.49547 21.3526L13.5025 15.3486L12.7955 14.6414L6.78854 20.6454L7.49547 21.3526ZM13.5025 15.3486L20.3535 8.49858L19.6465 7.79142L12.7955 14.6414L13.5025 15.3486ZM20.3536 7.79148L15.2096 2.64648L14.5024 3.35352L19.6464 8.49852L20.3536 7.79148ZM12 21.5H22V20.5H12V21.5ZM22 20.5H12V21.5H22V20.5Z" fill="black"/>
+                </svg>
             </div>
             
         </div>
@@ -42,9 +45,6 @@ export default {
          getData(){
             axios.get('https://strapi-note.herokuapp.com/notes').then((response) => {
                 this.results = response.data;
-                this.results.sort((a, b) => {
-                    return (b.updatedAt - a.updatedAt);
-                })
             })
         },
 
@@ -134,6 +134,14 @@ export default {
             font-size: 10px;
             position: absolute;
             bottom: 20px;
+        }
+
+        &__edit {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 16px;
+            height: 16px;
         }
     }
 

@@ -59,11 +59,13 @@ export default {
         // add data to api
         addData(e) {
             e.preventDefault();
-            axios.post('https://strapi-note.herokuapp.com/notes', this.note).then(() => {
-                this.note.title = ''
-                this.note.content = ''
-                this.note.bgcolor = ''
-            })
+            if (this.note.title && this.note.content){
+                axios.post('https://strapi-note.herokuapp.com/notes', this.note).then(() => {
+                    this.note.title = ''
+                    this.note.content = ''
+                    this.note.bgcolor = ''
+                })
+            }
         }
     }
 }
