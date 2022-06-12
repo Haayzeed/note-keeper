@@ -55,7 +55,8 @@ export default {
         // show modal
         showModal(id) {
             this.show = true;
-             axios.get(api + id).then(() => {
+             axios.get(api + id).then((response) => {
+                 this.notes = response.data
                 this.fetchNotes();
             })
         },
