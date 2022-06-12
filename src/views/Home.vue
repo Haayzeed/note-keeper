@@ -11,7 +11,6 @@
 </template>
 
 <script>
-// @ is an alias to /src
 import noteForm from '@/components/noteForm.vue';
 import displayNote from '@/components/displayNote.vue';
 export default {

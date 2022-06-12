@@ -27,6 +27,8 @@
 
 <script>
 import axios from 'axios'
+import { mapGetters, mapActions } from 'vuex'
+const api = process.env.VUE_APP_BASE_URL;
 export default {
     data() {
         return {
@@ -36,17 +38,14 @@ export default {
         }
     },
     computed: {
+        ...mapGetters(["getAllNotes"]),
         reverseItems() {
-            return this.results.slice().reverse();
+            return this.getAllNotes.slice().reverse();
         }     
     },
     methods: {
         // get data from api
-         getData(){
-            axios.get('https://strapi-note.herokuapp.com/notes').then((response) => {
-                this.results = response.data;
-            })
-        },
+        ...mapActions(["fetchNotes"]),
 
         // hide modal
         hideModal() {
@@ -56,34 +55,30 @@ export default {
         // show modal
         showModal(id) {
             this.show = true;
-             axios.get('https://strapi-note.herokuapp.com/notes/' + id).then((response) => {
-                this.notes = response.data;
+             axios.get(api + id).then(() => {
+                this.fetchNotes();
             })
         },
 
         // update notes
         updateNote(id) {
             this.show = false
-            axios.put('https://strapi-note.herokuapp.com/notes/' + id, this.notes).then((response) => {
-                this.notes = response.data;
+            axios.put(api + id, this.notes).then(() => {
+                this.fetchNotes();
             })
         },
 
         // delete notes
         deleteNote(id) {
-            this.show = false
-            axios.delete('https://strapi-note.herokuapp.com/notes/' + id).then((response) => {
-                this.notes = response.data;
+            axios.delete(api + id).then(() => {
+                this.show = false
+                this.fetchNotes();
             })
-            this.results = this.results.filter(result => { return result.id != id});
         }
     },
     created() {
-        this.getData();
+        this.fetchNotes();
     },
-    updated() {
-        this.getData();
-    }
 }
 </script>
 

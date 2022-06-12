@@ -28,7 +28,7 @@
                             <button class="btn__color" content="#3c3f43" @click.prevent="getColor"></button>
                         </div>
                     </div>
-                    <button @click="addData">Add Note</button>
+                    <button @click.prevent="addData">Add Note</button>
                 </div>
             </form>
         </div>
@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import { mapActions } from 'vuex'
 export default {
     data() {
         return {
@@ -50,6 +50,7 @@ export default {
         }
     },
     methods: {
+        ...mapActions(["fetchNotes", "addNotes"]),
         // get color
         getColor(event){
             this.note.bgcolor = event.target.getAttribute('content');
@@ -57,14 +58,13 @@ export default {
         },
 
         // add data to api
-        addData(e) {
-            e.preventDefault();
+        addData() {
             if (this.note.title && this.note.content){
-                axios.post('https://strapi-note.herokuapp.com/notes', this.note).then(() => {
-                    this.note.title = ''
-                    this.note.content = ''
-                    this.note.bgcolor = ''
-                })
+                this.addNotes(this.note);
+                this.note.title = ''
+                this.note.content = ''
+                this.note.bgcolor = ''
+                this.fetchNotes();
             }
         }
     }
