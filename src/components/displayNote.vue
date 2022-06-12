@@ -45,7 +45,7 @@ export default {
     },
     methods: {
         // get data from api
-        ...mapActions(["fetchNotes"]),
+        ...mapActions(["fetchNotes", "addNotes"]),
 
         // hide modal
         hideModal() {

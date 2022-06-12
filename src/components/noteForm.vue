@@ -57,7 +57,7 @@ export default {
             this.hidePalette = false 
         },
 
-        // add data to api
+        // add data
         addData() {
             if (this.note.title && this.note.content){
                 this.addNotes(this.note);
