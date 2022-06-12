@@ -5,7 +5,7 @@ import createPersistedState from "vuex-persistedstate";
 
 Vue.use(Vuex)
 
-const api = process.env.VUE_APP_BASE_URL;
+const api = process.env.VUE_APP_URL;
 export default new Vuex.Store({
 plugins: [createPersistedState()],
   state: {

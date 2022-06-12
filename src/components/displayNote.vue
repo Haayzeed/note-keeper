@@ -28,7 +28,7 @@
 <script>
 import axios from 'axios'
 import { mapGetters, mapActions } from 'vuex'
-const api = process.env.VUE_APP_BASE_URL;
+const api = process.env.VUE_APP_URL;
 export default {
     data() {
         return {
